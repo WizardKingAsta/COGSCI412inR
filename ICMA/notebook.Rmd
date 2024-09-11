@@ -11,3 +11,37 @@ date: "`r Sys.Date()`"
 plot(cars)
 ```
 
+```{r}
+ohno_this_is_a_nightmare <- "hello"
+```
+
+
+```{r}
+2+2
+```
+
+```{r}
+x <- 2+2
+```
+Value gets saved in environment
+```{r}
+?mean
+```
+
+```{r}
+mean(c(1,2,3))
+```
+```{r}
+mean(my_vector)
+```
+
+```{r}
+my_vector <- c(2,3,4)
+```
+
+```{r}
+?sd
+sd(1:2) ^2
+```
+
+
