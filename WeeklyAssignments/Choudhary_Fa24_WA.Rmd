@@ -1,0 +1,49 @@
+---
+title: "D2SC: Weekly Assignments"
+author: "Maanav Choudhary"
+date: "2024-09-13"
+output: html_notebook
+---
+
+# Initial Loading
+
+```{r}
+library(tidyverse)
+```
+
+
+# Week 1
+In order to figure out how to load the tidyverse package, I went to the tidyverse docsumentation. I typed in "How to load tidyverse in R" in google.
+
+I chose the first link that came up : https://tidyverse.tidyverse.org/
+
+I then ran the code chunk to check for errors and make sure it was working.
+
+```{r}
+?tidyverse
+```
+
+tidyverse-package {tidyverse}	R Documentation
+tidyverse: Easily Install and Load the 'Tidyverse'
+Description
+logo
+The 'tidyverse' is a set of packages that work in harmony because they share common data representations and 'API' design. This package is designed to make it easy to install and load multiple 'tidyverse' packages in a single step. Learn more about the 'tidyverse' at https://www.tidyverse.org.
+
+Author(s)
+Maintainer: Hadley Wickham hadley@rstudio.com
+
+Other contributors:
+
+RStudio [copyright holder, funder]
+
+See Also
+Useful links:
+
+https://tidyverse.tidyverse.org
+
+https://github.com/tidyverse/tidyverse
+
+Report bugs at https://github.com/tidyverse/tidyverse/issues
+
+[Package tidyverse version 2.0.0 Index]
+
