@@ -65,6 +65,7 @@ a. There are 792 rows in the data set, and 6 columns. I did not need to write a 
 # b.
 ?dplyr_by
 participants <- distinct(analogyDataset["qualtrics_id"])
+print(participants)
 ```
 There are 99 unqiue people in the dataset. I found this by using the dplyr function "distinct" on the particpant Ids, the size of the returned vector is the amount of people particpating in the study.
 
