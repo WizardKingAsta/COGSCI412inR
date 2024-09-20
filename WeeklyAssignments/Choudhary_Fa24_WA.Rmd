@@ -47,3 +47,37 @@ Report bugs at https://github.com/tidyverse/tidyverse/issues
 
 [Package tidyverse version 2.0.0 Index]
 
+
+# Week 2
+
+```{r}
+analogyDataset <- read.csv("tidy_data/MFIndD_analogy.csv")
+print(analogyDataset)
+```
+
+1. In this data set, the first column, named "qualtrics_id", contains the unqiue identifier for the particpants. 
+
+2.
+
+a. There are 792 rows in the data set, and 6 columns. I did not need to write a seperate code chunk for this, as printing the analogyDataset shows the dimensions of it in the description. 
+
+```{r}
+# b.
+?dplyr_by
+participants <- distinct(analogyDataset["qualtrics_id"])
+```
+There are 99 unqiue people in the dataset. I found this by using the dplyr function "distinct" on the particpant Ids, the size of the returned vector is the amount of people particpating in the study.
+
+```{r}
+# c
+participant_trials <- analogyDataset %>%
+  group_by(qualtrics_id) %>%
+    summarize(max_trials = max(trial_number))
+
+summarize(participant_trials, sd(max_trials))
+
+```
+Yes, every particpant has data from the same number of trials. I got the max of each participants trials, and took the standard deviation of them. The standard deviation being 0 represents that all participants have the same maximum number of trials. 
+
+
+
