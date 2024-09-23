@@ -54,3 +54,33 @@ my_numbers %>%
   mean()
 ```
 
+
+# ICMA Sept 23 2024
+ #pivot_longer(): requires data and the columns you want to pivot into long form
+
+```{r}
+library(tidyverse)
+```
+```{r}
+head(billboard)
+billboard_long <- billboard %>%
+  pivot_longer(cols = starts_with("wk"),names_to = "week",names_prefix= "wk", values_to = "position",values_drop_na= TRUE)
+billboard_long
+```
+```{r}
+billboard_long %>%
+  pivot_wider(names_from= week, values_from =position)
+```
+
+```{r}
+billboard_sep <-billboard %>%
+  separate(col = date.entered,into =c("year","month","day") ,sep = "-")
+```
+
+```{r}
+billboard_sep %>%
+  unite(col = "full date", c(year,month,day))
+
+```
+
+
