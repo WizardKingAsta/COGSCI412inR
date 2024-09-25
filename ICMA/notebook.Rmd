@@ -83,4 +83,29 @@ billboard_sep %>%
 
 ```
 
+#ICMA Sept 25th 2024
+
+```{r}
+# Histogram of Chicks weight
+ChickWeight %>%
+  ggplot(aes(x = weight)) + 
+  geom_histogram()
+```
+```{r}
+ChickWeight %>%
+  ggplot(aes(y = weight, x = Time, color = Diet)) +
+  geom_point() +
+  geom_smooth()
+```
+```{r}
+
+ChickWeight %>%
+  ggplot(aes(y = weight, x = Time, color = Diet)) +
+  geom_point(alpha = .5) + #Transparency
+  geom_smooth(se = FALSE)+ #best fits and removes confidence interval
+  theme_minimal() +
+  facet_grid(~Diet)+ #Splitting up into individual graphs by diet
+  labs(y = "weight in grams", x = "time in days", title = "Chick Weight Over Time With Varying Diets") #Changing Axis Labels
+
+```
 
