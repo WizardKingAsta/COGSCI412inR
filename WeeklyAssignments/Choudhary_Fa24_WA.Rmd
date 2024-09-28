@@ -82,3 +82,41 @@ Yes, every particpant has data from the same number of trials. I got the max of 
 
 
 
+
+# Week 3
+
+ Process.)
+ 
+```{r, eval = FALSE}
+analogyDataset %>%
+  summarize(.by = qualtrics_id, .groups = response_type, el_count = n("Rel"), )
+#analogyDataset %>%
+  #pivot_wider(id_cols =c(qualtrics_id), names_from = match_type_1, values_from = response_type)
+```
+The code chunk above was one of my attempts at solving question 1. I was correct in using the summarize function, however the syntax I used in the statement was not correct. The use of .by was correct. Grouping the info by qualtrics_id was what the question wanted, and resulted in the correct result for the code chunk that was my final solution. However, I was not properly understanding the use of .groups. I was getting an error for response_type. I double checked and saw the spelling of it was correct, so I went to the help part of R studio and saw that .groups was used more for things like groping rowwise rather than by specific data. I then googled counting with summarize and saw that the sum() function was better than n() which is the function I was seeing in the help tab. After realizing that and playing around with the syntax, I was able to get the desired result from the code chunk below. 
+
+1.)
+
+```{r}
+summarised_by_rel_matches <- analogyDataset %>%
+  summarize(.by = qualtrics_id, rel = sum(response_type == "Rel", na.rm = TRUE) )
+```
+
+2.)
+
+```{r}
+summarised_by_rel_matches %>%
+  ggplot(aes(x = rel))+
+  geom_histogram()+
+  labs(y = "Number of participants", x = "Number of trials with relational Matches")
+
+```
+I notice that the variable of relational match count is not spread in an even way. The variable is more dense around the ends. Many of the participants have either 8 relational matches, meaning they select a relational match in every trial, or 0 relational matches, meaning they select relational matches in none of the trials. 
+
+3.)
+
+```{r}
+analogyDataset%>% 
+  pivot_wider(id_cols = c(qualtrics_id), names_from = "trial_number",names_sort = TRUE,values_from = "response_type" )
+```
+
