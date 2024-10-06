@@ -120,3 +120,42 @@ analogyDataset%>%
   pivot_wider(id_cols = c(qualtrics_id), names_from = "trial_number",names_sort = TRUE,values_from = "response_type" )
 ```
 
+# Week 4
+
+
+```{r}
+rei_dataset <- read.csv("tidy_data/MFIndD_REI.csv")
+head(rei_dataset)
+```
+The type of the response column is char, while the type of the scored_response column is an int. The reason that the response column has type char, is because although it includes some numbers, it also contains some cells that include, "strongly agree" or other examples of non numeric entries.
+
+2.)
+```{r}
+rei_dataset_adjusted <- rei_dataset %>%
+  mutate(response = case_when(response == "Strongly Disagree" ~ 1.0,response == "Strongly Agree" ~ 5.0 , is.na(response) == TRUE ~ 0, TRUE ~ as.double(response)))
+#Printing adjusted data to ensure it worked
+rei_dataset_adjusted
+```
+
+3.)
+```{r}
+rei_analysis <- rei_dataset_adjusted %>%
+  mutate(new_scored_response = case_when(rev_scoring == "neg" ~ 6-response, TRUE ~ response))
+#Printing the data set to show the new column
+rei_analysis
+```
+Putting out the inputs and outputs of the numbers when reverse scoring is neg to find a pattern.
+1 -> 5
+2 -> 4
+3 ->3
+4 ->2
+5 ->1
+After looking for a while, i noticed that 6-input is equal to the correct output for all of our possible inputs.
+
+4.)
+```{r}
+accuracy <- rei_analysis%>%
+summarise(all(new_scored_response == scored_response, na.rm = TRUE))
+accuracy
+```
+I used summarize to compare the new scored response column with the one already in the data set, if they are all equal, then the code should return True. The return of True indicates that the new_scored_responsse column is correct.

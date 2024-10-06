@@ -1,19 +1,53 @@
 ---
-title: "R Notebook"
+title: "Data Exercise 1: Decision Making"
+author: "Maanav Choudhary"
+date: "`rSys.Date()"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
-
+#Loading Libraries and data
 ```{r}
-plot(cars)
+library(tidyverse)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+```{r}
+data_set <- read_csv("CogSci412_DE1_data.csv") %>%
+  mutate(condition = case_when(is.na(FL_39_DO) == FALSE~FL_39_DO, #First Case
+                                is.na(FL_43_DO) == FALSE ~ FL_43_DO)) %>%#Second Case 
+  filter(Progress == 100 & DistributionChannel == "anonymous") %>%
+  select(ResponseId, condition, familiarity = Q10, pencil_control = 'Pencil Control',
+         pencil_control_conf = 'Conf. Pencil Control',
+         mag_stnd = 'Magazine Standard',
+         mag_stnd_conf = 'Conf. Mag. Stand.',
+         mag_control = Magazine_Control,
+         mag_control_conf = 'Conf. Mag. Control',
+         pencil_stnd = Pencil_Standard,
+         pencil_stnd_conf = 'Conf. Pencil Stand.') %>%
+  filter(ResponseId != "R_5R9cvvcJ5vFulLe" ) 
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+data_set
+```
 
+Each cell can be categroized with three pieces of info:
+- pencil Vs. magazine
+- control vs. standard
+- answer vs. confidence
+
+What we want in long form:
+
+ResponseId: unique identifier for that dataset
+Content: was the question about pencils or magazines
+Type: was the question a control question or a standard question
+DV("dependent variable"): Answer or Confidence
+
+value: actual observed response
+
+```{r}
+data_set %>%
+  pivot_longer(pencil_control:pencil_stnd_conf, names_to ="old_column", values_to = "value") %>%
+  filter(is.na(value) == FALSE) %>%
+  separate(into = c("content", "type", "dv"), col = old_column)
+```
+
+#For long form want one obersevation per row
