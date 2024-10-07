@@ -108,4 +108,38 @@ ChickWeight %>%
   labs(y = "weight in grams", x = "time in days", title = "Chick Weight Over Time With Varying Diets") #Changing Axis Labels
 
 ```
+#ICMA Oct 7 2024
+```{r}
+as.numeric("eighteen")
+```
+Based on your data, you must decide what you should do in this situation.
+
+
+```{r}
+my_double <- 12.9
+```
+
+```{r}
+as.integer(my_double)
+```
+```{r}
+as.character(my_double)
+```
+
+3. logical 
+TRUE or T FALSE or F
+stored as 1 and 0 resoectivly 
+
+4. Na
+2 == Na && Na == Na
+both return Na bc R does not know what Na is.
+
+5. 
+and = &&
+or ||
+not = !
+
+```{r}
+(2.0 + 3 + 9 -4) == (2+ 6 + as.integer("2.9")) && TRUE || NA
+```
 

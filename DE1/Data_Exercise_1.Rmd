@@ -47,7 +47,12 @@ value: actual observed response
 data_set %>%
   pivot_longer(pencil_control:pencil_stnd_conf, names_to ="old_column", values_to = "value") %>%
   filter(is.na(value) == FALSE) %>%
-  separate(into = c("content", "type", "dv"), col = old_column)
+  separate(into = c("content", "type", "DV"), col = old_column)
+
+  mutate(DV = case_when(is.na(DV) == TRUE ~ "resp", DV == "conf" ~ "conf"))
 ```
 
 #For long form want one obersevation per row
+#CLASS OCTOBER 2
+
+
