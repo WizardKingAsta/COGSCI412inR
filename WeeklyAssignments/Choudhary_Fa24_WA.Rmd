@@ -159,3 +159,43 @@ summarise(all(new_scored_response == scored_response, na.rm = TRUE))
 accuracy
 ```
 I used summarize to compare the new scored response column with the one already in the data set, if they are all equal, then the code should return True. The return of True indicates that the new_scored_responsse column is correct.
+
+# Week 5
+
+1a.)
+```{r}
+rei_sub_scale_summary <- rei_analysis %>%
+  group_by(qualtrics_id, sub_type ) %>%
+  summarize(score = sum(new_scored_response))
+rei_sub_scale_summary
+```
+
+1b.)
+```{r}
+rei_sub_scale_summary %>%
+  ungroup() %>%
+  summarise(any(is.na(score)))
+```
+
+I ungrouped here first because i was getting a response that was not correct, any() should result in one boolean yet i was getting a whole column. I went to stack overflow for this. After ungrouping, i did any() which would return TRUE if any of the score values were na. The return of false indicates that there were no NA values.
+
+1c.)
+
+My code did not show any values that were na, however if there were i would have to go and look back at the code for any place i could add an na.rm = TRUE to ignore the na values for that calculation and/or summary.
+
+2.)
+```{r}
+analogy_rei_joint <- full_join(summarised_by_rel_matches, rei_sub_scale_summary)
+analogy_rei_joint
+```
+
+3.)
+```{r}
+analogy_rei_joint %>%
+  ggplot(aes(y = score , x= rel, color = sub_type))+
+  geom_point() +
+  geom_smooth(se=FALSE) +
+  theme_minimal() +
+  labs(y = "REI Score", x = "number of relational matches", title = "Correlation between relational matches, score, and sub type")
+```
+
