@@ -10,7 +10,7 @@ date: "`r Sys.Date()`"
 ```{r}
 plot(cars)
 ```
-
+# ICMA Sept 11 2024
 ```{r}
 ohno_this_is_a_nightmare <- "hello"
 ```
@@ -53,24 +53,140 @@ getwd()
 my_numbers %>%
   mean()
 ```
+```{r}
+library(tidyverse)
+```
+# ICMA Sept 16 2024
+
+```{r}
+head(3, billboard)
+```
+
+```{r}
+billboard %>%
+  head(3)
+```
+
+```{r}
+my_numbers <- c(1, 2, 3, 4, 5, 8, 9, 10)
+```
+
+```{r}
+my_numbers %>%
+  mean()
+
+```
+```{r}
+mtcars %>%
+  rownames_to_column()
+```
+```{r}
+write_csv(mtcars, # object name
+          "mtcars_fromR.csv" #file name to save it
+          )
+```
+
+```{r}
+mtcars %>%
+  rownames_to_column() %>%
+  write_csv("mtcars_fromR_rownames.csv")
+```
+
+```{r}
+mtcars_read <- read_csv("/Users/emperormaanav/Documents/COGSCI412inR/ICMA/mtcars_fromR_rownames.csv")
+```
+
+# ICMA Sept 18 2024
+
+```{r}
+?ChickWeight
+```
+
+```{r}
+ChickWeight %>%
+  select(weight)
+```
+
+```{r}
+ChickWeight %>%
+  head(3)
+```
+
+```{r}
+chick_clean <- ChickWeight %>%
+  select(chick_id = Chick,
+         diet = Diet,
+         age_days = Time,
+         weight_gm = weight)
+```
+
+```{r}
+chick_clean %>%
+  arrange(chick_id)
+```
+
+```{r}
+chick_clean %>%
+  mutate(session = case_when(TRUE         ~ as.character(age_days),
+                             age_days == 0 ~ "birth",
+                             age_days == 20 ~ "last1",
+                             age_days == 21 ~ "last2"
+                             ))
+```
+```{r}
+chick_clean %>%
+  mutate(weight_lbs = weight_gm/453.6) 
+```
+
+```{r}
+chick_clean %>%
+  mutate(weight_lbs = weight_gm/453.6) %>%
+  group_by(diet, age_days) %>%
+  summarise(N = n(),
+            mean_wgt_gm = mean(weight_gm),
+            mean_wgt_lbs = mean(weight_lbs)) %>%
+  arrange(-age_days) %>%
+  filter(age_days == 20)
+```
+
+```{r}
+chick_clean %>%
+  filter(age_days == 20) %>%
+  mutate(weight_lbs = weight_gm/453.6) %>%
+  group_by(diet) %>%
+  summarise(N = n(),
+            mean_wgt_gm = mean(weight_gm),
+            mean_wgt_lbs = mean(weight_lbs))
+```
+
+```{r}
+mtcars_modified <- read_csv("/Users/emperormaanav/Documents/COGSCI412inR/ICMA/mtcars_fromR_rownames.csv")
+```
+```{r}
+glimpse(mtcars_modified)
+```
+
+
+
+
 
 
 # ICMA Sept 23 2024
  #pivot_longer(): requires data and the columns you want to pivot into long form
 
 ```{r}
-library(tidyverse)
-```
-```{r}
 head(billboard)
 billboard_long <- billboard %>%
   pivot_longer(cols = starts_with("wk"),names_to = "week",names_prefix= "wk", values_to = "position",values_drop_na= TRUE)
 billboard_long
 ```
+
+
 ```{r}
 billboard_long %>%
   pivot_wider(names_from= week, values_from =position)
 ```
+
 
 ```{r}
 billboard_sep <-billboard %>%
@@ -83,7 +199,7 @@ billboard_sep %>%
 
 ```
 
-#ICMA Sept 25th 2024
+# ICMA Sept 25th 2024
 
 ```{r}
 # Histogram of Chicks weight
@@ -108,7 +224,7 @@ ChickWeight %>%
   labs(y = "weight in grams", x = "time in days", title = "Chick Weight Over Time With Varying Diets") #Changing Axis Labels
 
 ```
-#ICMA Oct 7 2024
+# ICMA Oct 7 2024
 ```{r}
 as.numeric("eighteen")
 ```
@@ -143,7 +259,95 @@ not = !
 (2.0 + 3 + 9 -4) == (2+ 6 + as.integer("2.9")) && TRUE || NA
 ```
 
-#ICMA Oct 16 2024
+# ICMA Oct 9 2024
+```{r}
+my_number <- 12
+```
+```{r}
+age_data <- tribble(
+                    ~ id, ~ age,
+                    1, 8,
+                    2, 10,
+                    3, 8,
+                    5, 9
+            )
+
+gender_data <- tribble(
+                    ~ id, ~ gender,
+                    1, "f",
+                    2, "m",
+                    3, "nb",
+                    4, "m",
+                    6, "f"
+            )
+
+
+gender_data_BADID <- tribble(
+                    ~ id_x, ~ gender,
+                    1, "f",
+                    2, "m",
+                    3, "nb",
+                    4, "m",
+                    6, "f"
+            )
+```
+
+```{r}
+age_data
+```
+```{r}
+gender_data
+```
+```{r}
+full_join(age_data, gender_data)
+```
+```{r}
+full_join(gender_data_BADID, age_data, by = join_by(id_x == id))
+```
+```{r}
+full_join(age_data, gender_data_BADID, by = join_by(id == id_x))
+```
+```{r}
+right_join(age_data, gender_data)
+```
+```{r}
+left_join(age_data, gender_data)
+```
+
+```{r}
+inner_join(age_data, gender_data)
+```
+
+```{r}
+bind_cols(gender_data, age_data)
+```
+```{r}
+age_data_4 <- tribble(
+                    ~ id, ~ age,
+                    1, 8,
+                    2, 10,
+                    3, 8,
+                    5, 9
+            )
+
+gender_data_4 <- tribble(
+                    ~ id, ~ gender,
+                    1, "f",
+                    2, "m",
+                    3, "nb",
+                    4, "m"
+            )
+```
+
+```{r}
+bind_cols(age_data_4, gender_data_4)
+```
+```{r}
+bind_rows(age_data_4, gender_data_4)
+```
+
+
+# ICMA Oct 16 2024
 
 Iteration: 
 iterate over people
@@ -165,4 +369,65 @@ for(i in seq_along(animals)){
 }
 ```
 
+
+```{r}
+fave_number <- tribble(~name, ~number,
+                       "MC", 8,
+                       "AP", 9,
+                       "NG", 12,
+                       "VE", 6,
+                       "AL", 17,
+                       "AR", 3,
+                       "MC", 7,
+                       "RK", 8,
+                       "AC", 4,
+                       "SC", 21,
+                       "KK", 16,
+                       "RK", 28,
+                       "VK", 17,
+                       "MH", 12)
+```
+
+```{r}
+for (i in fave_number) {
+  print(i)
+}
+```
+
+```{r}
+class(fave_number)
+
+```
+
+```{r}
+for (i in fave_number["number"]) {
+  print(i)
+}
+
+```
+
+```{r}
+for (i in fave_number$number) {
+  print(i)
+}
+```
+
+```{r}
+length(fave_number$number)
+```
+
+```{r}
+for (i in fave_number[["number"]]) {
+  print(i)
+}
+```
+
+```{r}
+for (i in seq_along(fave_number$name)) {
+  
+  print(str_c(fave_number$name[i], "'s favorite number is ", fave_number$number[i]))
+  
+}
+
+```
 
