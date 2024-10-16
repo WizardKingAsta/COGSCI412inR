@@ -143,3 +143,26 @@ not = !
 (2.0 + 3 + 9 -4) == (2+ 6 + as.integer("2.9")) && TRUE || NA
 ```
 
+#ICMA Oct 16 2024
+
+Iteration: 
+iterate over people
+
+for(var in seq){
+  expr
+}
+
+```{r}
+animals <- c("cat", "dog","rabbit")
+
+for (animal in animals){
+  print(animal)
+}
+```
+```{r}
+for(i in seq_along(animals)){
+  print(animals[i])
+}
+```
+
+
