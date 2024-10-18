@@ -199,3 +199,73 @@ analogy_rei_joint %>%
   labs(y = "REI Score", x = "number of relational matches", title = "Correlation between relational matches, score, and sub type")
 ```
 
+# Week 6
+1.)
+```{r}
+probability_task_data <- read.csv("tidy_data/MFIndD_probtask.csv")
+probability_task_data
+```
+2.)
+```{r}
+#probability_task_data %>%
+ # summarize(count = n_distinct(condition))
+
+condition_vector <- probability_task_data$condition %>%
+  unique()
+
+length(condition_vector)
+
+condition_vector
+
+```
+I did the above code two ways, the part in the comment is finding the number of unqiue values first separate from listing them, and the second way uses only one statement to make a vector of the values and its lenght as the number of unqiue items. I figures the second way was more efficient, but kept the first because it was my initial approach.
+
+rt = columnd of reaction time in ms
+
+```{r}
+mean_vector = c(0,0,0,0)
+
+number_of_entries = c(0,0,0,0)
+
+for(i in seq_along(probability_task_data$condition)){
+  
+  if(probability_task_data$condition[i] == condition_vector[1]){ 
+   mean_vector[1]<- mean_vector[1]+ probability_task_data$rt[i]
+   number_of_entries[1] = number_of_entries[1]+1
+  }else if(probability_task_data$condition[i] == condition_vector[2]){
+    mean_vector[2]<- mean_vector[2]+ probability_task_data$rt[i]
+    number_of_entries[2] = number_of_entries[2]+1
+  }else if(probability_task_data$condition[i] == condition_vector[3]){
+    mean_vector[3]<- mean_vector[3]+ probability_task_data$rt[i]
+    number_of_entries[3] = number_of_entries[3]+1
+  }else if(probability_task_data$condition[i] == condition_vector[4]){
+    mean_vector[4]<- mean_vector[4]+ probability_task_data$rt[i]
+    number_of_entries[4] = number_of_entries[4]+1
+  }
+    
+}
+
+mean_vector <- mean_vector/number_of_entries
+mean_vector
+```
+
+3.)
+```{r}
+probability_task_data %>%
+  group_by(condition) %>%
+  summarise(mean_rt = mean(rt), overall_accuracy = mean(correct))
+```
+
+```{r}
+means_using_across <- probability_task_data %>%
+  group_by(condition) %>%
+  summarise(across(c(rt,correct), mean))
+means_using_across
+```
+
+
+
+
+
+
+
