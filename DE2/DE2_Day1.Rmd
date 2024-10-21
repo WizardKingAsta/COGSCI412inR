@@ -1,0 +1,82 @@
+---
+title: "DE2_Day1"
+output: html_notebook
+uthor: "Maanav Choudhary"
+date: "`r Sys.Date()`"
+---
+```{r}
+library(tidyverse)
+```
+
+```{r}
+files <- list.files(path = "/Users/emperormaanav/Documents/COGSCI412inR/DE2_Parker_UNZIP-BEFORE-USING/jumping_data_parker/",
+                    pattern = "*.csv",
+                    full.names = TRUE)
+```
+
+
+```{r}
+convert_cols <- function(file){
+  file <- file %>%
+    mutate(sex = case_when(sex == FALSE ~ "F",
+                         TRUE ~ sex),
+          date = as.character(date))
+  
+}
+```
+
+```{r}
+raw_data <- map(files, read_csv)%>%
+  map(convert_cols) %>%
+  bind_rows()
+```
+
+Mao maps a certain functino to the values in the first paramater
+```{r}
+raw_data %>%
+  group_by(subject,distance)%>%
+  filter( outcome %in% c(0,1))
+  mutate(succ_rate_NOabort = sum(outcome ==1)/n())
+```
+
+
+```{r}
+raw_data [[1]] %>%
+  mutate(sex = case_when(sex == FALSE ~ "F",
+                         TRUE ~ sex))
+```
+
+```{r}
+raw_data[[1]] %>%
+  distinct()
+```
+
+## exploring the data
+
+```{r}
+summary_raw_data <- raw_data %>%
+  group_by(c(distcane, subject)) %>%
+  summarise(succ_rate = sum(outcome == 1)/n())
+```
+
+```{r}
+summary_raw_data %>%
+  ggplot(aes(x = succ_rate))+
+  geom_histogram()
+```
+
+```{r}
+summary_raw_data %>%
+  ggplot(aes(x = distance, 
+             y = succ_rate,
+             group = subject))+
+  geom_line() +
+  ylim(0,1)
+```
+
+
+
+
+Replicating figure in the paper
+outcome is discrete between values of 0, 1, and 2. The plot is continuous between 0 and 1
+
