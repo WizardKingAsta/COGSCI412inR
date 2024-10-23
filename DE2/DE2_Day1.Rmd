@@ -9,7 +9,7 @@ library(tidyverse)
 ```
 
 ```{r}
-files <- list.files(path = "/Users/emperormaanav/Documents/COGSCI412inR/DE2_Parker_UNZIP-BEFORE-USING/jumping_data_parker/",
+files <- list.files(path = "/Users/emperormaanav/Documents/COGSCI412inR/DE2/DE2_Parker_UNZIP-BEFORE-USING/jumping_data_parker/",
                     pattern = "*.csv",
                     full.names = TRUE)
 ```
