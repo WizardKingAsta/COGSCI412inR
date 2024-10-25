@@ -9,6 +9,7 @@ output: html_notebook
 
 ```{r}
 library(tidyverse)
+library(ggdist)
 ```
 
 
@@ -263,9 +264,61 @@ means_using_across <- probability_task_data %>%
 means_using_across
 ```
 
+# Week 7
+
+1.)
+```{r}
+probability_task_data %>%
+group_by(condition) %>%
+summarise(across(c(rt, correct), mean)) %>%
+pivot_longer(c(rt, correct)) %>%
+ggplot(aes(y = value, x = condition)) +
+geom_point(color = "red") +
+facet_wrap(~name, scales = "free")
+```
 
 
+1a).
 
+From the first plot, we can see from the title that it graphs the relationship between condition and the value of correctness. Thus, the first plot shows us how accurate participants were across conditions. From this, we can tell that particpants were considerably more accurate in the "blob_stacked" and "dots_EqSizeRand" conditions than they were in the "blob_shifted" and "dots_EqSizeSep" conditions. The right plot is titled "rt", meaning it plots the reaction time for each of the conditions.This plot shows that the reaction time for the "blob_stacked" condition is much faster than all the other conditions at just below 850, with "dots_EqSizeRand" being the second closest with an average around 880, and the conditions of "blob_shifted" and "dots_EqSizeSep" being very close to each other around 890. The combinations of both plots shows that particpants tended to react faster and with more accuracy for the conditions of "blob_stacked" and "dots_EqSizeRand". With these two conditions, the faster reaction was also more accurate. 
 
+1b).
 
+The first thing I noticed for both graphs is how there were 2 pairs of points, the points in each pair were close to each other but the pairs themselves were very far apart. I think this was the first thing I noticed because the distance between pairs was very large which made it apparent, and also at a distance both plots have the same pattern of pairs being very far apart.
 
+1c).
+
+The information I think is hard to see in the plot is the condition that each point relates to. On my screen the labels for conditions are long and the words squish together below the x axis for both plots, making it hard to read and decipher what the words say. This squishing of words makes it hard. In the same difficulty of discerning conditions, the points are all the same color. Since both plots have the same conditions, discerning condition by color and having one key would be easier to read the labels and tell which point was which. 
+
+2).
+
+For this problem, I am reading in the raw data again from the csv because my last week's grade was low so I wanted to avoid any past errors propagating into this week.
+
+```{r}
+probability_data <- read.csv("tidy_data/MFIndD_probtask.csv")
+probability_data %>%
+  group_by(condition, SubID) %>%
+  summarise(prop_corr = mean(correct)) %>%
+  ggplot(aes(y = prop_corr, x = condition, color = condition)) +
+  geom_jitter(width = 0.2, height = 0,  alpha = 0.6)+
+  labs(title = "Proportion of correct by condition")
+  
+```
+I added geom_jitter to separate the points and make it easier to read. I also changed the colors of the points to make the difference between condition types easier to read apart. I also added a title to make it more clear what the graph was saying as opposed to just the "condition" on the first graph.
+
+I had some things I was unsure about for this question so i'll list them here, hopefully my explanation will save some points, even if not please explain in the submission comments. I though of using mutate to add the new column to the raw data because thats what the wording of the question led me to believe, however, either summarise or mutate would result in the same end graph, summarise just gets rid of the excess data. 
+
+3.)
+```{r}
+
+probability_data <- read.csv("tidy_data/MFIndD_probtask.csv")
+probability_data %>%
+  group_by(condition, SubID) %>%
+  summarise(prop_corr = mean(correct)) %>%
+  ggplot(aes(y = condition, x = prop_corr, color = condition)) +
+  geom_jitter(width = 0.2, height = 0,  alpha = 0.6)+
+  labs(title = "Proportion of correct by condition") +
+  geom_dotsinterval()
+```
+
+Including intervals helps this plot show things the other two don't. The other plot showed only the mean, but by showing distributions we can see frequencies. By seeing where the interval rises and falls, we can see that there were certain proportions than many participants showed, and others that only very few showed. For example, the first graph shows that the mean for the "blob_shifted" condition was around .6, however this plot shows  a very low frequency there, and shows that there were much more participants that were around .55 and .7, with a dip at .6. This information could not be told from the other two graphs.
