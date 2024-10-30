@@ -2,7 +2,11 @@
 title: "D2SC: Weekly Assignments"
 author: "Maanav Choudhary"
 date: "2024-09-13"
-output: html_notebook
+output: 
+  html_notebook:
+    toc: true
+    toc_float: true
+    #toc_depth: 3
 ---
 
 # Initial Loading
@@ -296,12 +300,13 @@ For this problem, I am reading in the raw data again from the csv because my las
 
 ```{r}
 probability_data <- read.csv("tidy_data/MFIndD_probtask.csv")
-probability_data %>%
+prop_data <- probability_data %>%
   group_by(condition, SubID) %>%
   summarise(prop_corr = mean(correct)) %>%
   ggplot(aes(y = prop_corr, x = condition, color = condition)) +
   geom_jitter(width = 0.2, height = 0,  alpha = 0.6)+
   labs(title = "Proportion of correct by condition")
+prob_data
   
 ```
 I added geom_jitter to separate the points and make it easier to read. I also changed the colors of the points to make the difference between condition types easier to read apart. I also added a title to make it more clear what the graph was saying as opposed to just the "condition" on the first graph.
@@ -312,13 +317,48 @@ I had some things I was unsure about for this question so i'll list them here, h
 ```{r}
 
 probability_data <- read.csv("tidy_data/MFIndD_probtask.csv")
-probability_data %>%
+prob_data <- probability_data %>%
   group_by(condition, SubID) %>%
   summarise(prop_corr = mean(correct)) %>%
   ggplot(aes(y = condition, x = prop_corr, color = condition)) +
   geom_jitter(width = 0.2, height = 0,  alpha = 0.6)+
   labs(title = "Proportion of correct by condition") +
   geom_dotsinterval()
+prob_data
 ```
 
 Including intervals helps this plot show things the other two don't. The other plot showed only the mean, but by showing distributions we can see frequencies. By seeing where the interval rises and falls, we can see that there were certain proportions than many participants showed, and others that only very few showed. For example, the first graph shows that the mean for the "blob_shifted" condition was around .6, however this plot shows  a very low frequency there, and shows that there were much more participants that were around .55 and .7, with a dip at .6. This information could not be told from the other two graphs.
+
+
+# Week 8
+
+2.)
+```{r}
+mean_rt_correct_data <-probability_data %>%
+  group_by(SubID, condition) %>%
+ summarise(across(c(rt, correct), mean))
+```
+3.)
+
+```{r}
+#Separate condition by colors
+mean_rt_correct_data %>%
+  ggplot(aes(y = correct, x = rt, color = condition)) +
+  geom_point() +
+  labs(title = "Relationship between reaction time and accuracy", x = "Reaction Time", y = "Accuracy")
+```
+
+```{r}
+#Separate condtion by plots
+mean_rt_correct_data %>%
+  ggplot(aes(y = correct, x = rt)) +
+  geom_point() +
+  labs(y = "Accuracy", x = "Reaction Time") +
+  facet_wrap(~condition)
+```
+4.)
+There was something to be gathered from each of the plots made in problem 3.
+
+*Condition by color plot:* This plot showed that besides a few outliers, the relation of reaction time and accuracy was most similar for all conditions between a reaction time of 500-1000 and an accuracy between .5-.7. The density and variety of colors around this area showed that many of the conditions had a similar relationship in that general domain.
+
+**Condition separated by plots:** These plots separated all of the conditions to more clearly show how each one changed its relationship as reaction time changed. From this plot we can tell that for a condition like blob_shifted, as reaction time increased passed 1000, accuracy stayed fairly high and close to each over: remaining between .7 and .8. While the condition of blob_stacked had more variation, some points around .6 and some around.9. Furthermore, we could see that some conditions did not end up havig as long reaction time as others, we can see this because blob_shifted had some reaction times beyond 1500, while none of the other conditions did.

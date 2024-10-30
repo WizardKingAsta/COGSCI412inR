@@ -1,11 +1,24 @@
 ---
 title: "D2SC ICMA Notebook"
-output: html_notebook
+output: 
+  html_notebook:
+    df_print: yes
+    toc: yes
+    toc_float: 
+      toc_collapsed: yes
+    toc_depth: 2
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
+    
 author: "Maanav Choudhary"
 date: "`r Sys.Date()`"
 ---
 
 # ICMA Sept 9 2024
+
+
 
 ```{r}
 plot(cars)
@@ -31,9 +44,7 @@ Value gets saved in environment
 ```{r}
 mean(c(1,2,3))
 ```
-```{r}
-mean(my_vector)
-```
+
 
 ```{r}
 my_vector <- c(2,3,4)
@@ -49,10 +60,6 @@ my_numbers <- c(1,2,3,4,5,6,7,8,9,10)
 getwd()
 ```
 
-```{r}
-my_numbers %>%
-  mean()
-```
 ```{r}
 library(tidyverse)
 ```
@@ -429,5 +436,47 @@ for (i in seq_along(fave_number$name)) {
   
 }
 
+```
+
+# ICMA Oct 28 2024
+Communicating data 
+
+Jargon:
+Dont use jargon that is not explained, try to stick to very well known acronyms like AI, or explain only what is necessary 
+
+Tell a story:
+Use analogies and metaphors
+
+The power if three:
+Things are easuer to remember in 3s
+
+Inroduction:
+Should have a big question or problem statemement.
+Literature review to motivate the problem statement
+Little quesion should be related to big questino but more small and manageable
+
+Tell me what your gonna tell me, then tell me, then tell me again what you just told me
+
+Zotero
+
+# ICMA Oct 30 2024
+setting r eval = FALSE makes code chunks not run
+
+**writing in Bold**
+
+*italics*
+
+Part 2: create a variable, then write sentences w it
+
+```{r}
+name <- "Maanav"
+```
+
+My name is `r name` and I don't mind when people use both **bold** and *italics* in the same sentence.
+
+```{r chick-plot, fig.cap = "Chick weight across time"}
+ChickWeight %>%
+  ggplot(aes(y = weight, x = Time, group = Chick)) + 
+  geom_line()
 ```
 
