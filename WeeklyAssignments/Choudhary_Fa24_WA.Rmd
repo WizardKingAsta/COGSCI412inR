@@ -332,11 +332,17 @@ Including intervals helps this plot show things the other two don't. The other p
 
 # Week 8
 
+For the below problem, the part in comments was my initial approach. However it had many decimals and firstly did not match your output, and was secondly hard to read. To match your output, I chose to not use the across() function, so that i could round the mean of both columns to more closley resemble your example output as well as make it easier to read.
+
 2.)
 ```{r}
+#mean_rt_correct_data <-probability_data %>%
+  #group_by(SubID, condition) %>%
+ #summarise(across(c(rt, correct), mean))
 mean_rt_correct_data <-probability_data %>%
   group_by(SubID, condition) %>%
- summarise(across(c(rt, correct), mean))
+ summarise(rt = round(mean(rt)),correct= round(mean(correct),3))
+mean_rt_correct_data
 ```
 3.)
 
@@ -361,4 +367,4 @@ There was something to be gathered from each of the plots made in problem 3.
 
 *Condition by color plot:* This plot showed that besides a few outliers, the relation of reaction time and accuracy was most similar for all conditions between a reaction time of 500-1000 and an accuracy between .5-.7. The density and variety of colors around this area showed that many of the conditions had a similar relationship in that general domain.
 
-**Condition separated by plots:** These plots separated all of the conditions to more clearly show how each one changed its relationship as reaction time changed. From this plot we can tell that for a condition like blob_shifted, as reaction time increased passed 1000, accuracy stayed fairly high and close to each over: remaining between .7 and .8. While the condition of blob_stacked had more variation, some points around .6 and some around.9. Furthermore, we could see that some conditions did not end up havig as long reaction time as others, we can see this because blob_shifted had some reaction times beyond 1500, while none of the other conditions did.
+**Condition separated by plots:** These plots separated all of the conditions more clearly and shows how each one changed its relationship as reaction time changed. From this plot we can tell that for a condition like blob_shifted, as reaction time increased passed 1000, accuracy stayed fairly high and close to each over: remaining between .7 and .8. While the condition of blob_stacked had more variation, some points around .6 and some around.9. Furthermore, we could see that some conditions did not end up having as long reaction time as others, we can see this because blob_shifted had some reaction times beyond 1500, while none of the other conditions did.
