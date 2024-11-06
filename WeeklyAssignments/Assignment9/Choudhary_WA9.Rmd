@@ -1,0 +1,57 @@
+---
+title: "Choudhary_WA9"
+output: ioslides_presentation
+date: "2024-11-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(ggdist)
+data = read_csv("/Users/emperormaanav/Documents/COGSCI412inR/WeeklyAssignments/Assignment9/data/MFIndD_probtask.csv")
+```
+
+
+```{r}
+data
+```
+
+
+```{r dataprep}
+prop_data_mod <- data %>%
+  separate(col = left_stim, into = c("left_numerator","left_other"), sep = "_") %>%
+  separate(col = right_stim, into = c("right_numerator","right_other"), sep = "_") %>%
+  mutate(left_proportion_value = as.integer(left_numerator)/(as.integer(left_numerator) + as.integer(left_other))) %>%
+  mutate(right_proportion_value = as.integer(right_numerator)/(as.integer(right_numerator) + as.integer(right_other))) %>%
+  mutate(larger_numerator = case_when(left_numerator>right_numerator ~ "left",
+                                      right_numerator>left_numerator ~ "right")) %>%
+  mutate(larger_proportion = case_when(left_proportion_value>right_proportion_value ~ "left",
+                                      right_proportion_value>left_proportion_value ~ "right")) %>%
+   mutate(num_congruent = case_when(larger_numerator == larger_proportion ~ TRUE,
+                                      TRUE~FALSE))
+prop_data_mod
+
+```
+## Main Research Question
+
+How do people think proportionally with different kinds of stimuli?
+
+## Fork Research Question
+
+How does the congruence between the larger numerator between left and right and larger proportion value between left and right relate to accuracy across conditions?
+
+## Slide with R Output
+```{r}
+prop_plot_data <- prop_data_mod %>%
+  group_by(SubID, condition,num_congruent) %>%
+  summarise(proportion_correct = mean(correct))
+
+prop_plot_data %>%
+  ggplot(aes(y = proportion_correct, x = condition, color = num_congruent)) +
+  geom_point()+
+  stat_halfeye()+
+  labs(title = "plot", y = "Proportion Correct", x = "Condition")
+
+```
+
+
