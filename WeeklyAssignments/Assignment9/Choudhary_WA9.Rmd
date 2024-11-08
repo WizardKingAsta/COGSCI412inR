@@ -1,6 +1,8 @@
 ---
 title: "Choudhary_WA9"
-output: ioslides_presentation
+output: 
+  slidy_presentation: default
+  ioslides_presentation: default
 date: "2024-11-06"
 ---
 
@@ -11,10 +13,6 @@ library(ggdist)
 data = read_csv("/Users/emperormaanav/Documents/COGSCI412inR/WeeklyAssignments/Assignment9/data/MFIndD_probtask.csv")
 ```
 
-
-```{r}
-data
-```
 
 
 ```{r dataprep}
@@ -29,7 +27,6 @@ prop_data_mod <- data %>%
                                       right_proportion_value>left_proportion_value ~ "right")) %>%
    mutate(num_congruent = case_when(larger_numerator == larger_proportion ~ TRUE,
                                       TRUE~FALSE))
-prop_data_mod
 
 ```
 ## Main Research Question
