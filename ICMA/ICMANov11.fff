@@ -1,0 +1,7 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\centering
+\includegraphics{ICMANov11_files/figure-latex/chick-plot-1.pdf}
+\caption{\label{fig:chick-plot}Each chick was weighed every other day from birth to day 20 and on day 21. This plot shows the weight of each chick (y-axis) for each day they were measured(x-asix)}
+\end{figure*}
