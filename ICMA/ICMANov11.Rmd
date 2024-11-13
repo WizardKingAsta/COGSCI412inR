@@ -79,6 +79,14 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 
 # Results
 
+```{r diet-1-3}
+overall_difference <- t.test(weight ~ Diet,
+       data = filter(ChickWeight, Diet %in% c(1,3)))
+
+apa_output <- apa_print(overall_difference)
+```
+There is a significant diff in the avg weight of chicks who received Diet 1 compared to Diet 3, `r apa_output$full_result`
+
 (ref:chick-caption) Each chick was weighed every other day from birth to day 20 and on day 21. This plot shows the weight of each chick (y-axis) for each day they were measured(x-asix)
 
 ```{r chick-plot, fig.cap = "(ref:chick-caption)"}

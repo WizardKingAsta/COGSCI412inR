@@ -1,0 +1,170 @@
+---
+main_topsize: 0.1 #percent coverage of the poster
+main_bottomsize: .08
+#ESSENTIALS
+title: '**Proportional Reasoning Across Formats**'
+author:
+  - name: '**Maanav Choudhary**'
+    affil: 1
+    main: true
+    orcid: '0000-0002-1099-3857'
+    email: maanavpilania63@gmail.com
+affiliation:
+  - num: 1
+    address: Rutgers University
+main_findings:
+  - "Make **better posters** with RMarkdown + **posterdown**."
+logoleft_name: https&#58;//raw.githubusercontent.com/brentthorne/posterdown/master/images/betterhexlogo.png
+logoright_name: https&#58;//raw.githubusercontent.com/brentthorne/posterdown/master/images/betterhexlogo.png
+logocenter_name: https&#58;//raw.githubusercontent.com/brentthorne/posterdown/master/images/qr-code-black.png
+output: 
+  posterdown::posterdown_betterport:
+    self_contained: false
+    pandoc_args: --mathjax
+    number_sections: false
+bibliography: packages.bib
+link-citations: true
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      warning = FALSE,
+                      tidy = FALSE,
+                      message = FALSE,
+                      fig.align = 'center',
+                      out.width = "100%")
+options(knitr.table.format = "html") 
+```
+
+```{r setup}
+library(tidyverse)
+library(ggdist)
+data = read_csv("/Users/emperormaanav/Documents/COGSCI412inR/WeeklyAssignments/Assignment9/data/MFIndD_probtask.csv")
+```
+
+
+# Introduction
+
+Comparing proportions is sometimes very hard! But, even infants seem to be able to do it a little bit. The purpose of this science project was to better understand how well people compare proportions when the proportions are presented in different formats. The purpose of this class assignment is to take the R-code and plots we've been generating over the last several weeks and put it all together into one poster format.  
+
+```{r, include=FALSE}
+knitr::write_bib(c('posterdown', 'rmarkdown','pagedown'), 'packages.bib')
+```
+
+# Research Objectives
+
+1. Does average performance vary across format type?
+2. Does average performance vary across numerator congruency status?
+3. Does numerator congruency vary across format type? (i.e., is there an interaction)
+
+# Participants
+A total of 99 adults participated in this study.
+
+# Methods
+
+First, participants were introduced to a story about a magic ball and that the outcome (i.e., blue or orange) depended on the proportions. Then they were asked to compare the proportions of different images.
+
+In other words, participants were shown to images of the same kind at the same time and asked to decide which had a higher proportion of the shape (or dots) colored in blue.
+
+![Example of an image given to participants](/Users/emperormaanav/Documents/COGSCI412inR/WeeklyAssignments/Assignment10/Choudhary_WA10_files/images_WA10/Probtask_Trial.png)
+
+## Conditions
+
+There were four different conditions that changed what kinds of images the participants saw:
+
+*
+Divided blobs: blue and orange were entirely separate
+*
+integrated blob: one blob, divided to be part blue and part orange
+*
+separated dots: blue and orange dots were on opposite sides of the image.
+*
+integrated dots: blue and orange dots were intermixed
+
+![Example images of the four formate given to participants](/Users/emperormaanav/Documents/COGSCI412inR/WeeklyAssignments/Assignment10/Choudhary_WA10_files/images_WA10/Probtask_Formats.png){#id .class width=65% height=65%}
+
+
+**_Now on to the results!_**
+
+# Results
+
+1. Does average performance vary across format types, ignoring all other aspects of the stimuli?
+```{r}
+data %>%
+group_by(condition) %>%
+summarise(value = mean(correct)) %>%
+ggplot(aes(y = value, x = condition)) +
+geom_point(color = "red") +
+  labs(title = "Average Accuracy Across Conditions", x="Format Type", y = "Average Accuracy") +
+  ylim(.5,.7)
+```
+This plot shows the average accuracry for all format types, showing that the integrated blobs and integrated dots both showed a higher average than the separated blobs and dots, the averages of the priors being close to each other(.01 apart) and the averages of the latter being close to each other (.003 apart)
+
+2. How are reaction time and accuracy related?
+
+```{r}
+#Separate condtion by plots
+data %>%
+  group_by(SubID, condition) %>%
+ summarise(rt = round(mean(rt)),correct= round(mean(correct),3)) %>%
+  ggplot(aes(y = correct, x = rt, color = condition)) +
+  geom_point() +
+  labs(y = "Accuracy", x = "Reaction Time") +
+  geom_smooth(se = FALSE)+
+  facet_wrap(~condition)
+```
+This graph outlines that across all format types, as the reaction time becomes longer, accuracy rises. The lines of best fit show that in most conditions this increase drops off after a certain point. 
+
+3. How does numerator congruency interact with format type?
+```{r dataprep}
+prop_data_mod <- data %>%
+  separate(col = left_stim, into = c("left_numerator","left_other"), sep = "_") %>%
+  separate(col = right_stim, into = c("right_numerator","right_other"), sep = "_") %>%
+  mutate(left_proportion_value = as.integer(left_numerator)/(as.integer(left_numerator) + as.integer(left_other))) %>%
+  mutate(right_proportion_value = as.integer(right_numerator)/(as.integer(right_numerator) + as.integer(right_other))) %>%
+  mutate(larger_numerator = case_when(left_numerator>right_numerator ~ "left",
+                                      right_numerator>left_numerator ~ "right")) %>%
+  mutate(larger_proportion = case_when(left_proportion_value>right_proportion_value ~ "left",
+                                      right_proportion_value>left_proportion_value ~ "right")) %>%
+   mutate(num_congruent = case_when(larger_numerator == larger_proportion ~ TRUE,
+                                      TRUE~FALSE))
+
+```
+
+```{r}
+prop_plot_data <- prop_data_mod %>%
+  group_by(SubID, condition,num_congruent) %>%
+  summarise(proportion_correct = mean(correct))
+
+prop_plot_data %>%
+  ggplot(aes(y = proportion_correct, x = condition, color = num_congruent)) +
+  geom_point()+
+  stat_halfeye()+
+  labs(title = "plot", y = "Proportion Correct", x = "Condition")
+
+```
+This graph shows that, for all conditions, when the numerators are congruent the proportion of correct responses is higher.
+
+# Interpretation
+
+1. Does average performance vary across format type?
+
+The data shows that the average performance does indeed vary across format type. The data indicates that when blobs and dots are integrated, the performance is higher than when they are separated. The performance difference between blobs and dots when they are both separated or integrated is not very large (.68 and .69 for integrated and .617 and .62 for separated). The higher averages for integrated data vs separated that this data shows indicates that humans may deal better with integrated visuals than separated when gauging quantity.
+
+2. Does average performance vary across numerator congruency status?
+
+The average performance is higher on when the numerators are congruent then when they are not. 
+
+3. Does numerator congruency vary across format type? (i.e., is there an interaction)
+
+
+
+# Conclusion
+
+1. One of the hardest parts of the assignment was interpreting how the data and graphs related to the research objectives, and trying to turn the visual information into something written and coherent. 
+
+2. The most satisfying and enjoyable part of the assignment was figuring out how to insert the images, and playing around with the format to make it visually appealing.
+
+# References
+
+SKIP
