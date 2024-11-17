@@ -13,7 +13,7 @@ affiliation:
   - num: 1
     address: Rutgers University
 main_findings:
-  - "Make **better posters** with RMarkdown + **posterdown**."
+  - "Weekly Assignment 10!"
 logoleft_name: https&#58;//raw.githubusercontent.com/brentthorne/posterdown/master/images/betterhexlogo.png
 logoright_name: https&#58;//raw.githubusercontent.com/brentthorne/posterdown/master/images/betterhexlogo.png
 logocenter_name: https&#58;//raw.githubusercontent.com/brentthorne/posterdown/master/images/qr-code-black.png
@@ -37,6 +37,7 @@ options(knitr.table.format = "html")
 ```
 
 ```{r setup}
+#Loading in necessary libraries
 library(tidyverse)
 library(ggdist)
 data = read_csv("/Users/emperormaanav/Documents/COGSCI412inR/WeeklyAssignments/Assignment9/data/MFIndD_probtask.csv")
@@ -58,7 +59,12 @@ knitr::write_bib(c('posterdown', 'rmarkdown','pagedown'), 'packages.bib')
 3. Does numerator congruency vary across format type? (i.e., is there an interaction)
 
 # Participants
-A total of 99 adults participated in this study.
+```{r}
+#Instantiating count of participants
+participants_count <- 99
+```
+
+A total of `r participants_count` adults participated in this study.
 
 # Methods
 
@@ -90,12 +96,14 @@ integrated dots: blue and orange dots were intermixed
 
 1. Does average performance vary across format types, ignoring all other aspects of the stimuli?
 ```{r}
+#Graphng data of performace
 data %>%
 group_by(condition) %>%
 summarise(value = mean(correct)) %>%
 ggplot(aes(y = value, x = condition)) +
 geom_point(color = "red") +
-  labs(title = "Average Accuracy Across Conditions", x="Format Type", y = "Average Accuracy") +
+  labs(title = "Average Accuracy Across Conditions", x="Format Type", y = "Average Accuracy") + 
+  scale_x_discrete(labels = c('Divided blobs','Integrated blob','Integrated dots','Separated dots'))+
   ylim(.5,.7)
 ```
 This plot shows the average accuracry for all format types, showing that the integrated blobs and integrated dots both showed a higher average than the separated blobs and dots, the averages of the priors being close to each other(.01 apart) and the averages of the latter being close to each other (.003 apart)
@@ -111,7 +119,11 @@ data %>%
   geom_point() +
   labs(y = "Accuracy", x = "Reaction Time") +
   geom_smooth(se = FALSE)+
-  facet_wrap(~condition)
+  facet_wrap(~condition, labeller = labeller(condition = c('blob_shifted' = 'Divided blobs',
+    'blob_stacked' = 'Integrated blob',
+    'dots_EqSizeRand' = 'Integrated dots',
+    'dots_EqSizeSep' = 'Separated dots'
+  )))
 ```
 This graph outlines that across all format types, as the reaction time becomes longer, accuracy rises. The lines of best fit show that in most conditions this increase drops off after a certain point. 
 
@@ -140,6 +152,7 @@ prop_plot_data %>%
   ggplot(aes(y = proportion_correct, x = condition, color = num_congruent)) +
   geom_point()+
   stat_halfeye()+
+  scale_x_discrete(labels = c('Divided blobs','Integrated blob','Integrated dots','Separated dots'))+
   labs(title = "plot", y = "Proportion Correct", x = "Condition")
 
 ```
