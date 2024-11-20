@@ -41,4 +41,77 @@ desc %>%
   geom_histogram(binwidth = 1,
                  color = "white")
 ```
+The above representation doesn't clearly label the different groups, nor does it outline the differences clearly. 
+Use facet_grid to split up by ethnic groups
+
+```{r}
+desc %>%
+  ggplot(aes(y = no_categories)) +
+  geom_histogram() +
+  facet_grid(~group_name)
+```
+Wanted to test out the differences between facet wrap and grid. This represnetaiton seems a little easier to read.
+```{r}
+desc %>%
+  ggplot(aes(y = no_categories)) +
+  geom_histogram() +
+  facet_wrap(~group_name)
+```
+Check the ethnic groups to ensure "NA" is a mising val and not a name for an ehthnic group
+```{r}
+desc %>%
+  distinct(group_name)
+```
+
+```{r}
+desc %>%
+  count(group_name)
+```
+
+
+Grouping data to prepare for the plot
+```{r}
+grouped_cat_desc <- desc %>%
+  #Group by ethnicity 
+  group_by(group_name) %>%
+  #Get the mean of the category for the ethnic groups, also get the standaard deviation
+  summarise(mean = mean(no_categories),
+            sd = sd(no_categories)) %>%
+  #Add a new column to data with the rounded mean and standard deviations
+  mutate(mean_sd = str_c(round(mean, 2), " (", round(sd, 2), ")"))
+```
+
+```{r}
+desc %>%
+  filter(is.na(group_name) == FALSE) %>%
+  mutate(full_group_name = case_when(group_name == "south_asian" ~ "South Asian",
+                                     group_name == "se_asian" ~ "Southeast Asian",
+                                     group_name == "non_asian_multi" ~ "Non-Asian Multilingual",
+                                     group_name == "eng_mono" ~ "English monolingual diverse",
+                                     group_name == "east_asian" ~ "East Asian"),
+         full_group_name = factor(full_group_name, 
+                                  levels = c("English monolingual diverse",
+                                             "Non-Asian Multilingual",
+                                             "South Asian",
+                                             "Southeast Asian",
+                                             "East Asian"))) %>%
+  ggplot(aes(y = fct_rev(full_group_name),
+             x = no_categories,
+             fill = fct_rev(full_group_name))) +
+  geom_boxplot(color = "black",
+               outliers = FALSE,
+               alpha = 0.8) +
+  xlim(0, 20) +
+  labs(x = "Number of Categories",
+       y = "Group Name",
+       title = "Average Number of Categories Created per group") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  scale_fill_viridis_d(option = "plasma") +
+  annotate(geom = "text", y = 1, x = 17.5, label = filter(grouped_cat_desc, group_name == "east_asian")$mean_sd) +
+  annotate(geom = "text", y = 2, x = 17.5, label = filter(grouped_cat_desc, group_name == "se_asian")$mean_sd) +
+  annotate(geom = "text", y = 3, x = 17.5, label = filter(grouped_cat_desc, group_name == "south_asian")$mean_sd) +
+  annotate(geom = "text", y = 4, x = 17.5, label = filter(grouped_cat_desc, group_name == "non_asian_multi")$mean_sd) +
+  annotate(geom = "text", y = 5, x = 17.5, label = filter(grouped_cat_desc, group_name == "eng_mono")$mean_sd)
+```
 
