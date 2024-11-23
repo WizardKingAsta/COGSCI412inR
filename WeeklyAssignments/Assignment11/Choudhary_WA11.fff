@@ -1,0 +1,5 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+
+\includegraphics[width=2.98in]{images_WA10/Probtask_Trial} \caption{Example of an image given to participants.}\label{fig:unnamed-chunk-2}
+\end{figure*}

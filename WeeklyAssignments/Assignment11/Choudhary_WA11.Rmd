@@ -1,0 +1,225 @@
+---
+title             : "Proportional Reasoning Across Formats"
+shorttitle        : "Proportional Reasoning"
+
+author: 
+  - name          : "Maanav Choudhary"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "N/A"
+    email         : "maanavpilania63@gmail.com"
+    role: # Contributorship roles (e.g., CRediT, https://credit.niso.org/)
+      - "Conceptualization"
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+
+affiliation:
+  - id            : "1"
+    institution   : "Rutgers University"
+
+authornote: |
+  This is Maanav's Assignment 11, it was fun and challenging!
+
+abstract: |
+  Comparing proportions is a fundamental skill that even infants seem to possess, albeit at a rudimentary level. This study explores how well people compare proportions when presented in different visual formats, aiming to deepen our understanding of this cognitive process. Specifically, we examined whether average performance varies across format types, whether numerator congruency status influences performance, and whether an interaction exists between format type and numerator congruency. Here, we show that both format type and numerator congruency significantly impact performance, with notable interactions between these factors. These findings reveal that certain formats and congruency conditions facilitate more accurate comparisons, advancing previous knowledge by highlighting the importance of presentation design in proportion reasoning. This work contributes to a broader understanding of cognitive processing in numerical tasks and has implications for designing more effective educational and communicative tools.
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "keywords"
+wordcount         : "X"
+
+bibliography      : "r-references.bib"
+
+floatsintext      : yes
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+output            : papaja::apa6_pdf
+---
+
+
+```{r setup, include = FALSE}
+library("papaja")
+#Loading in necessary libraries
+library(tidyverse)
+library(ggdist)
+data = read_csv("/Users/emperormaanav/Documents/COGSCI412inR/WeeklyAssignments/Assignment9/data/MFIndD_probtask.csv")
+#r_refs("r-references.bib")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+
+```{r theme}
+# Set a global ggplot2 theme
+theme_set(
+  theme_minimal() +
+    theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      axis.title = element_text(size = 14, face = "bold"),
+      axis.text = element_text(size = 12),
+      legend.position = "bottom",
+      legend.text = element_text(size = 12),
+      panel.grid.major = element_line(color = "gray90"),
+      panel.grid.minor = element_blank()
+    )
+)
+
+```
+
+
+# Methods
+Here we outline how the data was collected, as well as information on the participants and materials used. 
+
+
+## Participants
+```{r}
+#Instantiating count of participants
+participants_count <- data %>%
+  summarise(count = n_distinct(SubID))
+```
+
+A total of `r participants_count` adults participated in this study.
+
+## Material
+The images provided to the participants had a mix of blue and orange. Some images had these represented as blobs, and some as dots. There were four conditions for the mix of blue and orange. 
+```{r example-img, fig.cap="Example of an image given to participants."}
+#Including the image given to the participants
+knitr::include_graphics("/Users/emperormaanav/Documents/COGSCI412inR/WeeklyAssignments/Assignment11/images_WA10/Probtask_Trial.png")
+```
+
+
+## Procedure
+First, participants were introduced to a story about a magic ball and that the outcome (i.e., blue or orange) depended on the proportions. Then they were asked to compare the proportions of different images, for example the ones shown in Figure \@ref(fig:example-img)
+
+In other words, participants were shown to images of the same kind at the same time and asked to decide which had a higher proportion of the shape (or dots) colored in blue.
+
+## Data analysis
+We used `r cite_r("r-references.bib")` for all our analyses.
+
+\newpage
+# Results
+
+1. Does average performance vary across format types, ignoring all other aspects of the stimuli?
+
+```{r prfpl, echo=FALSE}
+#Graphng data of performace
+performance_plot <- data %>%
+group_by(condition) %>%
+summarise(value = mean(correct)) %>%
+ggplot(aes(y = value, x = condition)) +
+geom_point(color = "red") +
+  labs(title = "Average Accuracy Across Conditions", x="Format Type", y = "Average Accuracy") + 
+  scale_x_discrete(labels = c('Divided blobs','Integrated blob','Integrated dots','Separated dots'))+
+  ylim(.5,.7)
+```
+
+```{r performance-plot, fig.cap="Average Performance."}
+performance_plot
+```
+
+Figure \@ref(fig:performance-plot) shows the average accuracry for all format types, showing that the integrated blobs and integrated dots both showed a higher average than the separated blobs and dots, the averages of the priors being close to each other(.01 apart) and the averages of the latter being close to each other (.003 apart)
+
+2. How are reaction time and accuracy related?
+\newpage
+```{r rtpl, echo=FALSE}
+#Separate condtion by plots
+rt_plot<- data %>%
+  group_by(SubID, condition) %>%
+ summarise(rt = round(mean(rt)),correct= round(mean(correct),3)) %>%
+  ggplot(aes(y = correct, x = rt, color = condition)) +
+  geom_point() +
+  labs(y = "Accuracy", x = "Reaction Time") +
+  geom_smooth(se = FALSE, color = "black")+
+  facet_wrap(~condition, labeller = labeller(condition = c('blob_shifted' = 'Divided blobs',
+    'blob_stacked' = 'Integrated blob',
+    'dots_EqSizeRand' = 'Integrated dots',
+    'dots_EqSizeSep' = 'Separated dots'
+  )))
+```
+
+```{r rt, fig.cap = "Reaction Time"}
+rt_plot
+```
+
+Figure \@ref(fig:rt) outlines that across all format types, as the reaction time becomes longer, accuracy rises. The lines of best fit show that in most conditions this increase drops off after a certain point. 
+
+\newpage
+
+3. How does numerator congruency interact with format type?
+
+```{r dataprep}
+#Preparing data by creating numerators and finding congruency
+prop_data_mod <- data %>%
+  separate(col = left_stim, into = c("left_numerator","left_other"), sep = "_") %>%
+  separate(col = right_stim, into = c("right_numerator","right_other"), sep = "_") %>%
+  mutate(left_proportion_value = as.integer(left_numerator)/(as.integer(left_numerator) + as.integer(left_other))) %>%
+  mutate(right_proportion_value = as.integer(right_numerator)/(as.integer(right_numerator) + as.integer(right_other))) %>%
+  mutate(larger_numerator = case_when(left_numerator>right_numerator ~ "left",
+                                      right_numerator>left_numerator ~ "right")) %>%
+  mutate(larger_proportion = case_when(left_proportion_value>right_proportion_value ~ "left",
+                                      right_proportion_value>left_proportion_value ~ "right")) %>%
+   mutate(num_congruent = case_when(larger_numerator == larger_proportion ~ TRUE,
+                                      TRUE~FALSE))
+
+```
+
+```{r}
+prop_plot_data <- prop_data_mod %>%
+  group_by(SubID, condition,num_congruent) %>%
+  summarise(proportion_correct = mean(correct))
+
+prop_plot <- prop_plot_data %>%
+  ggplot(aes(y = proportion_correct, x = condition, color = num_congruent)) +
+  geom_point()+
+  stat_halfeye()+
+  scale_x_discrete(labels = c('Divided blobs','Integrated blob','Integrated dots','Separated dots'))+
+  labs(title = "plot", y = "Proportion Correct", x = "Condition")
+
+```
+```{r  num-con, fig.cap="Numerator Congruency and Correctness"}
+prop_plot
+```
+
+
+The figure \@ref(fig:num-con) above shows that, for all conditions, when the numerators are congruent the proportion of correct responses is higher.
+
+
+# Discussion
+
+## Interpretation
+1. Does average performance vary across format type?
+
+The data shows that the average performance does indeed vary across format type. The data indicates that when blobs and dots are integrated, the performance is higher than when they are separated. The performance difference between blobs and dots when they are both separated or integrated is not very large (.68 and .69 for integrated and .617 and .62 for separated). The higher averages for integrated data vs separated that this data shows indicates that humans may deal better with integrated visuals than separated when gauging quantity.
+
+2. Does average performance vary across numerator congruency status?
+
+The average performance is higher on when the numerators are congruent then when they are not. 
+
+3. Does numerator congruency vary across format type? (i.e., is there an interaction)
+
+Numerator concurrency seems vary slightly across format type. Both of the dot cases appear to have less numerator concurrency than the blob conditions. 
+
+## Conclusion
+
+1. One of the hardest parts of the assignment was interpreting how the data and graphs related to the research objectives, and trying to turn the visual information into something written and coherent. 
+
+2. The most satisfying and enjoyable part of the assignment was figuring out how to insert the images, and playing around with the format to make it visually appealing.
+
+
+\newpage
+
+# References
+
+::: {#refs custom-style="Bibliography"}
+:::
