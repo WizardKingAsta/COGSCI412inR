@@ -480,3 +480,41 @@ ChickWeight %>%
   geom_line()
 ```
 
+## ICMA Dec 2 2024
+```{r}
+months <- c("April","Dec","Jan","Feb", "March")
+```
+
+```{r}
+sort(months)
+```
+
+```{r}
+typeof(months)
+```
+
+```{r}
+months<-factor(months,
+               levels = c("Jan","Feb", "March", "April", "Dec"))
+months
+```
+```{r}
+months_forcats <- fct(months,
+                      levels = c("Jan","Feb","March","April","May","June","July","Dec"))
+```
+
+```{r}
+months_forcats
+```
+
+```{r}
+factor(months, levels =  c("Jan","Feb","March","April","May","June","July"))
+```
+because december is not in the levels, it designates it as an NA automatically, with no warning.
+
+```{r}
+fct(months, levels =  c("Jan","Feb","March","April","May","June","July"),
+    na = c("Dec"))
+```
+
+
