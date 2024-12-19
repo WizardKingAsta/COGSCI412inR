@@ -21,10 +21,21 @@ Reading in data from the data folder
 ```{r}
 #Descriptive data
 desc <- read_csv("data/desc_all.csv") 
-#Error data from trials 
-e5_error <- read_csv("data/e5_error_df.csv")
-e15_error <- read_csv("data/e15_error_df.csv")
-e2_error <- read_csv("data/e2_error_df.csv")
+
+#Error data from trials, adjusted to change error_type column for joining later on
+
+e2_error <- read.csv("data/e2_error_df.csv") %>%
+  mutate(error_type = "Two") %>%
+  select(participant, group, error = error_2_df, error_type)
+
+e5_error <- read_csv("data/e5_error_df.csv") %>%
+  mutate(error_type = "Five") %>%
+  select(participant, group, error = error_2_df, error_type)
+
+e15_error <- read_csv("data/e15_error_df.csv") %>%
+  mutate(error_type = "Fifteen") %>%
+  select(participant, group, error = error_2_df, error_type)
+
 ```
 
 Descriptive information on da participants
@@ -81,6 +92,15 @@ grouped_cat_desc <- desc %>%
   mutate(mean_sd = str_c(round(mean, 2), " (", round(sd, 2), ")"))
 ```
 
+
+Themes:
+
+```{r}
+theme_set(theme_minimal())
+theme_update(legend.position= "none")
+```
+
+
 ```{r}
 desc %>%
   filter(is.na(group_name) == FALSE) %>%
@@ -113,5 +133,46 @@ desc %>%
   annotate(geom = "text", y = 3, x = 17.5, label = filter(grouped_cat_desc, group_name == "south_asian")$mean_sd) +
   annotate(geom = "text", y = 4, x = 17.5, label = filter(grouped_cat_desc, group_name == "non_asian_multi")$mean_sd) +
   annotate(geom = "text", y = 5, x = 17.5, label = filter(grouped_cat_desc, group_name == "eng_mono")$mean_sd)
+```
+
+## Plot 2
+
+The goal is to end up with a dataset that has three columns:
+
+participant | group | error_2 | error_5 | error_15 | error_type ->
+
+participant | group | error | error_type(2, 5 or 15)
+
+```{r}
+error_data <- bind_rows(e2_error, e5_error) %>%
+  bind_rows(e15_error)
+```
+
+
+```{r}
+e2_error
+```
+
+```{r}
+error_data %>% 
+   mutate(full_group_name = case_when(group == "South-east Asian" ~ "Southeast Asian",
+                                     group == "non_multi" ~ "Non-Asian Multilingual",
+                                     group == "English Monolingual" ~ "English monolingual diverse",
+                                     TRUE ~ group),
+         full_group_name = factor(full_group_name, 
+                                  levels = c("English monolingual diverse",
+                                             "Non-Asian Multilingual",
+                                             "South Asian",
+                                             "Southeast Asian",
+                                             "East Asian"))) %>%
+  ggplot(aes(y =error , x = error_type, color = full_group_name, group = group)) +
+  stat_summary(fun.data = mean_se, geom = "pointrange",
+               position = position_dodge(0.4),
+               color = "black")+
+  stat_summary(fun = mean, geom = "point",
+               position = position_dodge(0.4))+
+  scale_fill_viridis_d(option = "plasma")
+  labs(y = "Number of Errors", x = "Error Type")+
+    theme(legend.position = "right")
 ```
 

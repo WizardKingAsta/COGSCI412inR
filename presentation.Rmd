@@ -1,0 +1,115 @@
+---
+title: "The Effect of Cues on Memory"
+output: ioslides_presentation
+date: "2024-12-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(ggplot2)
+```
+
+## Research Questions:
+
+- Big Question: How does prediction error affect the reactivation and reconsolidation of memories?
+- Using a combination of data from both studies would yield information on how the prediction error of cues affects participant accuracy.
+-
+- Fork Question: Does the duration and arousal of the cues affect prediction error?
+- Trying to break down the cues into features and seeing how they effect the surprise of participants.
+
+## Method and Data Source:
+
+- The data I used for this was from an experiment on people from various backgrounds. Varying ethnicity, gender, education level and more. 
+- In the first study participants were give different types of cues and asked to rank how surprised they were by them. This surprise was used as a proxy for prediction error, and the prediction error of these cues was set as a norm.
+- The second study used these cues over 3 days and evaluated the memory accuracy of participants after witnessing cues. 
+
+
+```{r cars, echo = FALSE, include = FALSE}
+study_1 <- read_csv("/Users/emperormaanav/Documents/COGSCI412inR/final/Study1_MoonD.csv")
+```
+
+
+## Slide with Plot
+
+```{r pressure, echo=FALSE, include=FALSE}
+study_2 <- read_csv("/Users/emperormaanav/Documents/COGSCI412inR/final/Data_PEMemRecon_MoonD.csv")
+study_2
+```
+
+
+```{r}
+study_1 %>%
+  ggplot(aes(y = Surprise_1, fill = factor(Arousal_1))) + 
+  geom_density(alpha =.5) +
+  coord_flip()+  # Flips the graph vertically
+  labs( title = "Density Plot of Surprise Ratings by Arousal Level", x = "Density",
+    y = "Surprise Rating",  # Adjust the y-axis label (now horizontal)
+    fill = "Arousal Level") +
+  theme_minimal()
+```
+
+```{r plot, echo=FALSE, include=FALSE}
+study_1 %>%
+  ggplot(aes(y = Durationinseconds, x = Surprise_1)) + 
+  geom_violin(color = "red")+
+  geom_jitter(color = "lightblue", alpha = .7) +
+  ylim(0,2000)
+```
+
+## Big Plot
+
+```{r}
+cueAverages <- study_2 %>%
+  #group_by(List) %>%
+  summarise(across(matches("^MEQ[1-9]$|^MEQ1[0-9]$"), ~mean(.x, na.rm = TRUE), .names = "{.col}_avg")) %>%
+  pivot_longer(cols = matches("_avg$"), names_to = "Video", values_to = "MEQ_Avg") %>%
+   mutate(Video = as.double(str_extract(Video, "\\d+")))
+cueAverages
+```
+
+```{r}
+prediction_error <- study_1 %>%
+  group_by(Video) %>%
+  summarise(PE1_Avg = mean(PE1))
+```
+
+
+```{r}
+normalize <- function(x) {
+ ((x - min(x)) / (max(x) - min(x)))*5  # Normalizes to 0-1
+}
+```
+
+```{r}
+combined <- cueAverages %>%
+  inner_join(prediction_error, by = "Video") %>%
+  mutate(PE1_Avg = normalize(PE1_Avg))
+
+combined %>%
+  ggplot(aes(x = MEQ_Avg, y = PE1_Avg, color = Video)) +
+  geom_point() +
+  ylim(0,1.5)
+  theme_minimal()
+```
+
+```{r}
+Surprises <- study_1 %>%
+  group_by(Video) %>%
+  summarise(Surp = mean(Surprise_1))
+
+cueAverages <- study_2 %>%
+  #group_by(List) %>%
+  summarise(across(matches("^MEQ[1-9]$|^MEQ1[0-9]$"), ~mean(.x, na.rm = TRUE), .names = "{.col}_avg")) %>%
+  pivot_longer(cols = matches("_avg$"), names_to = "Video", values_to = "MEQ_Avg") %>%
+   mutate(Video = as.double(str_extract(Video, "\\d+")))
+
+combined2 <- cueAverages %>%
+  inner_join(Surprises, by = "Video")
+
+combined2 %>%
+  ggplot(aes(x = Surp, y = MEQ_Avg, color = Video)) +
+  geom_point()+
+  theme_minimal()
+```
+
