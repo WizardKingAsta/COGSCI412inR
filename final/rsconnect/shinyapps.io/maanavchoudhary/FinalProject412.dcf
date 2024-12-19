@@ -1,0 +1,13 @@
+name: FinalProject412
+title: final
+username: maanavchoudhary
+account: maanavchoudhary
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13621553
+bundleId: 9543871
+url: https://maanavchoudhary.shinyapps.io/FinalProject412/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: final_app_orig.R

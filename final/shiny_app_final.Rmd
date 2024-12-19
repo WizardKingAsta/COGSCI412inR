@@ -2,11 +2,7 @@
 title: "Final3"
 author: "Maanav Choudhary"
 date: "2024-12-19"
-output:
-  pdf_document: default
-  html_document: default
-bibliography: "r-references.bib"
-runtim: shiny
+runtime: shiny_prerendered
 ---
 ```{r, include = FALSE}
 library(shiny)
@@ -17,17 +13,8 @@ library(stringr)
 library(bslib)
 ```
 
-The section below sets up the ui of the shiny app.
 
-The shiny App is split among 7 tabs:
--Data info
--Methods
--Research Questions
--Big Question Plot and info
--Fork Question Plot and Info
--Final Interpretaion
--References
-```{r}
+```{r, include = FALSE}
 # Building the UI for the app
 ui <- navbarPage(
   title = "The Role of Prediction Error in Reconsolidation",
@@ -261,8 +248,11 @@ ui <- navbarPage(
 )
 ```
 
-```{r}
+```{r, include = FALSE}
 # Server logic
+study_1 <- read.csv("Study1_MoonD.csv")
+study_2<- read.csv("Data_PEMemRecon_MoonD.csv")
+
 server <- function(input, output) {
   
   # Create the interactive fork plot
@@ -377,7 +367,7 @@ server <- function(input, output) {
 
 ```
 
-```{r}
+```{r,include=FALSE}
 shinyApp(ui = ui, server = server)
 ```
 
